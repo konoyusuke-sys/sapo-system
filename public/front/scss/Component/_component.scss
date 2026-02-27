@@ -1,0 +1,442 @@
+.btn_submit,
+.btn_back,
+.link-btn {
+  text-decoration: none;
+  background-color: $main_color;
+  color: $white_color;
+  font-weight: bold;
+  display: block;
+  width: 100%;
+  max-width: 100%;
+  margin: 0 auto;
+  border: solid 2px $main_color;
+  line-height: 70px;
+  text-align: center;
+  transition: 0.5s;
+  position: relative;
+  letter-spacing: 2px;
+  font-size: 30px;
+
+  img {
+    width: 18px;
+  }
+
+  @include media('sp') {
+    border: solid 0.2rem $main_color;
+    line-height: 7rem;
+    letter-spacing: 0.2rem;
+    font-size: 3rem;
+
+    img {
+      width: 2rem !important;
+    }
+  }
+
+  // &::before {
+  //   content: "";
+  //   display: block;
+  //   width: 15px;
+  //   height: 15px;
+  //   border-right: solid 3px $white_color;
+  //   border-bottom: solid 3px $white_color;
+  //   position: absolute;
+  //   transform: rotate(-45deg);
+  //   transition: 0.5s;
+  //   right: 30px;
+  //   top: 50%;
+  //   margin-top: -7px;
+
+  //   @include media('sp') {
+  //     width: 1.5rem;
+  //     height: 1.5rem;
+  //     border-right: solid 0.3rem $white_color;
+  //     border-bottom: solid 0.3rem $white_color;
+  //     right: 3rem;
+  //     margin-top: -0.7rem;
+  //   }
+  // }
+
+  &:hover {
+    color: $main_color;
+    background-color: $white_color;
+    transition: 0.7s;
+
+    &::before {
+      border-color: $main_color;
+      right: 30px;
+
+      @include media('sp') {
+        right: 3rem;
+      }
+    }
+  }
+}
+
+.p-workflow {
+  .flow-tit {
+    text-align: center;
+    font-size: 40px;
+    font-weight: 600;
+    margin-top: 60px;
+    margin-bottom: 15px;
+    color: $blue_color;
+
+    @include media('sp') {
+      font-size: 4rem;
+      margin-top: 6rem;
+      margin-bottom: 1.5rem;
+    }
+  }
+
+  .flow-desc {
+    text-align: center;
+    font-size: 25px;
+
+    @include media('sp') {
+      font-size: 2.5rem;
+    }
+  }
+}
+
+.usage-item {
+  position: relative;
+  margin-bottom: 70px;
+  border-top-left-radius: 20px;
+  border-top-right-radius: 20px;
+
+  @include media('sp') {
+    margin-bottom: 7rem;
+    border-top-left-radius: 2rem;
+    border-top-right-radius: 2rem;
+  }
+
+  .item-number {
+    display: flex;
+    text-align: center;
+    justify-content: center;
+    align-items: center;
+    position: absolute;
+    content: "";
+    left: 0;
+    top: 0;
+    transform: translateY(-50%);
+    width: 80px;
+    height: 80px;
+    background-color: $main_color;
+    border-radius: 9999px;
+    color: $white_color;
+    font-size: 40px;
+
+    @include media('sp') {
+      width: 8rem;
+      height: 8rem;
+      font-size: 4rem;
+    }
+  }
+
+  .item-tit {
+    padding: 20px 0 20px 80px;
+    line-height: 1.5;
+    font-size: 35px;
+    background-color: #A3C946;
+    color: $white_color;
+    border-top-left-radius: 20px;
+    border-top-right-radius: 20px;
+
+    @include media('sp') {
+      padding: 2rem 0 2rem 8rem;
+      font-size: 3.5rem;
+      border-top-left-radius: 2rem;
+      border-top-right-radius: 2rem;
+    }
+
+    .big-txt {
+      font-size: 40px;
+
+      @include media('sp') {
+        font-size: 4rem;
+      }
+    }
+  }
+
+  .item-desc {
+    position: relative;
+    padding: 10px 25px;
+    font-size: 25px;
+    background-color: white;
+
+    &::before {
+      content: "";
+      bottom: 0;
+      right: 0;
+      border-top: 48px solid transparent;
+      border-right: 48px solid $main_color;
+      position: absolute;
+      z-index: 0;
+
+      @include media('sp') {
+        border-top: 4.8rem solid transparent;
+        border-right: 4.8rem solid $main_color;
+      }
+    }
+
+    @include media('sp') {
+      padding: 1rem 2.5rem;
+      font-size: 2.5rem;
+    }
+
+    .attention {
+      font-size: 20px;
+
+      @include media('sp') {
+        font-size: 2rem;
+      }
+    }
+  }
+}
+
+input {
+  margin: 0;
+  padding: 0;
+  background: none;
+  border: none;
+  border-radius: 0;
+  outline: none;
+  appearance: none;
+}
+
+.checkbox-wrapper {
+  position: relative;
+
+  .agreementformError {
+    left: 0;
+    top: 20px;
+    opacity: 0.87;
+    position: absolute;
+    display: none;
+
+    @include media('sp') {
+      top: 2rem;
+    }
+  }
+
+  label {
+    position: relative;
+    padding-left: 30px;
+
+    @include media('sp') {
+      padding-left: 3rem;
+    }
+
+    &::before {
+      content: "";
+      display: block;
+      box-sizing: border-box;
+      height: 20px;
+      width: 20px;
+      position: absolute;
+      border: 2px solid $main_color;
+      top: 0;
+      bottom: 0;
+      margin-top: 8px;
+      transition: 0.3s;
+
+      @include media('sp') {
+        height: 2rem;
+        width: 2rem;
+        border: 0.2rem solid $main_color;
+        margin-top: 0.8rem;
+      }
+    }
+
+    &::after {
+      content: "";
+      display: block;
+      box-sizing: border-box;
+      position: absolute;
+      top: 50%;
+      transition: 0.2s;
+      transform: rotate(45deg);
+      border-bottom: solid 3px $main_color;
+      border-right: solid 3px $main_color;
+      width: 15px;
+      height: 24px;
+      left: 6px;
+      opacity: 0;
+
+      @include media('sp') {
+        border-bottom: 0.3rem solid $main_color;
+        border-right: 0.3rem solid $main_color;
+        width: 1.5rem;
+        height: 2.4rem;
+        left: 0.6rem;
+      }
+    }
+  }
+
+  input[type="checkbox"]:checked+label:after {
+    opacity: 1;
+    margin-top: -20px;
+
+    @include media('sp') {
+      margin-top: -2rem;
+    }
+  }
+
+  .checkbox-txt {
+    position: absolute;
+    width: 500px;
+    left: 35px;
+    font-size: 20px;
+    top: 0;
+
+    @include media('sp') {
+      left: 3.5rem;
+      width: 50rem;
+      font-size: 2rem;
+    }
+  }
+}
+
+.modal_bg {
+  display: none;
+  top: 0px;
+  left: 0px;
+  width: 100%;
+  height: 100%;
+  position: fixed;
+  align-items: center;
+  justify-content: center;
+  letter-spacing: 1px;
+  background: rgba(0, 0, 0, 0.9);
+
+  @include media('sp') {
+    letter-spacing: 0.1rem;
+  }
+}
+
+.modal_bg.active {
+  display: flex;
+}
+
+.modal_bg .modal_cont ul li table {
+  width: 100%;
+  margin-top: 15px;
+
+  @include media('sp') {
+    margin-top: 1.5rem;
+  }
+}
+
+.modal_cont {
+  background: #fff;
+  padding: 40px;
+  width: 100%;
+  max-width: 640px;
+  overflow-y: auto;
+
+  @include media('sp') {
+    padding: 4rem;
+  }
+
+  table {
+    width: 100%;
+    margin-top: 10px;
+
+    @include media('sp') {
+      margin-top: 1rem;
+    }
+  }
+
+  table,
+  tr,
+  th,
+  td {
+    border-collapse: collapse;
+    border: 2px solid $main_color;
+
+    @include media('sp') {
+      border: 0.2rem solid $main_color;
+    }
+  }
+
+  th,
+  td {
+    text-align: center;
+    font-size: 24px;
+
+    @include media('sp') {
+      font-size: 2.4rem;
+    }
+
+    &:first-child {
+      background-color: #1aae41;
+      color: $white_color;
+
+      @include media('sp') {
+        padding: 1rem;
+      }
+    }
+  }
+}
+
+.modal_cont.active {
+  display: block;
+}
+
+.modal_cont p,
+.modal_cont ul li {
+  line-height: 2;
+  font-size: 18px;
+
+  @include media('sp') {
+    font-size: 1.8rem;
+  }
+}
+
+.modal_cont h3 {
+  color: $main_color;
+  text-align: center;
+  font-size: 30px;
+  margin-bottom: 30px;
+
+  @include media('sp') {
+    font-size: 3rem;
+    margin-bottom: 3rem;
+  }
+}
+
+.modal_cont .close {
+  margin-top: 30px;
+  background: $main_color;
+  color: $white_color;
+  display: block;
+  padding: 10px 20px;
+  text-align: center;
+  font-size: 25px;
+
+  @include media('sp') {
+    margin-top: 3rem;
+    padding: 1rem 2rem;
+    font-size: 2.5rem;
+  }
+}
+
+.modal_cont em {
+  display: block;
+  margin-top: 20px;
+  font-size: 25px;
+
+  @include media('sp') {
+    margin-top: 2rem;
+    font-size: 2.5rem;
+  }
+}
+
+.modal-attention {
+  margin-top: 15px;
+
+  @include media('sp') {
+    margin-top: 1.5rem;
+  }
+}

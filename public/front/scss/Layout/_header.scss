@@ -1,0 +1,201 @@
+#header {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  background: transparent;
+  padding-left: 50px;
+  padding-right: 45px;
+
+  @include media('sp') {
+    padding-left: 5rem;
+    padding-right: 4.5rem;
+  }
+
+  z-index: 999;
+
+  .header-wrapper {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0;
+    margin: 0;
+    height: 100%;
+    z-index: 0;
+
+    .header-logo {
+      position: relative;
+      flex: 0 0 auto;
+      width: auto;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 210px;
+      height: 90px;
+
+      img {
+        width: 100%;
+      }
+
+      @include media('sp') {
+        width: 21rem;
+        height: 9rem;
+      }
+
+    }
+
+    .header-nav {
+      position: relative;
+      flex: 0 0 auto;
+      width: auto;
+      height: 100%;
+
+      .header-contact {
+        width: 21rem;
+        height: 7.6rem;
+        display: flex;
+        justify-content: flex-end;
+        align-items: center;
+        padding: 0 !important;
+        margin-right: 0.2rem;
+
+        @include media('sp') {
+          margin-bottom: 0;
+          display: none;
+        }
+
+        .contact-form {
+          font-family: 'Noto Sans JP', sans-serif;
+          font-weight: 600;
+
+          &:link,
+          &:visited {
+            position: relative;
+            display: inline-block;
+            width: 21rem;
+            height: 7.6rem;
+            border-top: 1px solid #333030;
+            border-radius: 3px;
+            background: #333030;
+            box-shadow: 0 1px 0 hsla(255, 255%, 255%, 0.05), 0 0 1px hsla(255, 255%, 255%, 0.1), inset 0 1px 2px #333030;
+            transition: all .1s ease;
+            z-index: 1;
+          }
+
+          &:link:before,
+          &:visited:before {
+            position: absolute;
+            top: 0.3rem;
+            right: 0.3rem;
+            bottom: 0.3rem;
+            left: 0.3rem;
+            background: linear-gradient(to bottom, #333030, #767474);
+            box-shadow: inset 0 1px 0 hsla(255, 255%, 255%, 0.05), inset 0 0 1px hsla(255, 255%, 255%, 0.1), 0 4px 6px #333030, 0 1px 2px #333030;
+            color: hsla(0, 0%, 87%, 1);
+            font-weight: normal;
+            font-size: 1.6rem;
+            font-family: 'Noto Sans JP', sans-serif;
+            text-shadow: 0 -0.1rem 0.1rem #333030;
+            text-decoration: none;
+            text-transform: uppercase;
+            text-align: center;
+            content: "LINEでエントリー";
+            z-index: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+          }
+
+          &:hover:before {
+            background: hsla(26, 98%, 47%, 1);
+            background: linear-gradient(to bottom, hsla(240, 9%, 18%, 1), hsla(240, 6%, 12%, 1));
+            color: hsla(0, 0%, 96%, 1);
+          }
+
+          &:active:before {
+            border-top: 1px solid hsla(0, 0%, 1%, 1);
+            background: hsla(26, 98%, 47%, 1);
+            background: linear-gradient(to bottom, hsla(240, 6%, 7%, 1), hsla(240, 8%, 7%, 1));
+            color: hsla(0, 0%, 20%, 1);
+            box-shadow: inset 0 1px 3px hsla(0, 0%, 0%, 0.3), inset 0 0 2px hsla(0, 0%, 0%, 0.6), 0 1px 0 hsla(0, 0%, 20%, 1);
+          }
+        }
+      }
+
+      .nav-menu {
+        position: relative;
+        list-style: none;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        line-height: 1;
+        padding: 0;
+
+        @include media('sp') {
+          display: none;
+        }
+
+        &>li {
+          position: relative;
+          padding: 0 2rem;
+          display: flex;
+          justify-content: center;
+          align-items: center;
+
+          @media(max-width: 767px) {
+            padding: 0 0.75rem;
+          }
+        }
+
+        .menu-link {
+          position: relative;
+          display: inline-block;
+          font-family: 'Noto Sans JP', sans-serif;
+          font-weight: bold;
+
+          font-size: 1.6rem;
+          margin: 0;
+          white-space: nowrap;
+          text-decoration: none;
+          cursor: pointer;
+          transition: all 0.2s ease-in-out;
+          color: #222222;
+
+          &::after {
+            content: "";
+            position: absolute;
+            bottom: -1.5rem;
+            left: 50%;
+            transform: translateX(-50%);
+            display: none;
+            width: 0.5rem;
+            height: 0.5rem;
+            border-radius: 50%;
+            background: #D8B747;
+            transition: all 0.6s cubic-bezier(0.8, 0, 0.2, 1);
+          }
+
+          &:hover,
+          &.active {
+            &::after {
+              display: block;
+            }
+          }
+        }
+
+        &.color-base {
+          .menu-link {
+
+            &:hover,
+            &.active {
+              &::after {
+                background: $base_color;
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}
