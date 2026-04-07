@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Validator;
+use Symfony\Component\HttpFoundation\StreamedResponse;
 
 use App\Models\Forms;
 use App\Models\FormSenderGroups;
@@ -34,26 +35,167 @@ class FormController extends Controller
         return view('form.index',compact('forms'));       
     }
 
-    public function list($form_id)
+    public function list(Request $request, $form_id)
     {
-        $request = Request()->all();
-        $query = HistoryForm::where('form_id',$form_id);
-        $request['name'] = isset($request['name'])?$request['name']:'';
-        $request['kana'] = isset($request['kana'])?$request['kana']:'';
-        $request['email'] = isset($request['email'])?$request['email']:'';
-        $query->when($request['name'], function ($query, $name) {
-            return $query->where('name', 'like', "%{$name}%");
-        });
-        $query->when($request['kana'], function ($query, $kana) {
-            return $query->where('kana', 'like', "%{$kana}%");
-        });
-        $query->when($request['email'], function ($query, $email) {
-            return $query->where('email', 'like', "%{$email}%");
-        });
-        $lists = $query->paginate(20);
+        $lists = $this->filteredHistoryFormsQuery($form_id, $request)->orderByDesc('id')->paginate(20);
         $pref = config('custom.prefecture');
-        
-        return view('form.list',compact('lists','form_id','pref'));       
+
+        return view('form.list', compact('lists', 'form_id', 'pref'));
+    }
+
+    /**
+     * 申込履歴をCSVでダウンロード（一覧と同一の検索条件、登録時の全項目＋コードの表示名）。
+     */
+    public function exportHistoryCsv(Request $request, $form_id)
+    {
+        $rows = $this->filteredHistoryFormsQuery($form_id, $request)->orderByDesc('id')->get();
+
+        $pref = config('custom.prefecture');
+        $job = config('custom.job');
+        $expect = config('custom.expectation');
+        $connect = config('custom.connect');
+        $statusLabels = config('custom.status');
+        $category = config('custom.SenderGroupCategory');
+        $sexLabels = config('custom.sex');
+
+        $filename = 'form_history_'.$form_id.'_'.date('Ymd_His').'.csv';
+
+        $headers = [
+            'Content-Type' => 'text/csv; charset=UTF-8',
+            'Content-Disposition' => 'attachment; filename="'.$filename.'"',
+            'Cache-Control' => 'no-cache, no-store, must-revalidate',
+        ];
+
+        $self = $this;
+        $callback = function () use ($rows, $pref, $job, $expect, $connect, $statusLabels, $category, $sexLabels, $self) {
+            $out = fopen('php://output', 'w');
+            fprintf($out, chr(0xEF).chr(0xBB).chr(0xBF));
+
+            $headings = [
+                'ID', 'フォームID', '登録日時', '氏名', 'フリガナ', 'メールアドレス', 'LINE ID',
+                '勤務先名', '勤務先電話番号', '性別(値)', '性別', '生年', '生月', '生日',
+                '郵便番号', '都道府県ID', '都道府県', '市区町村', '番地等', '建物名等',
+                '携帯電話', '固定電話', 'ご要望・コメント',
+                '月収(入力値)', '業種(自由項目2)', '職業ID', '職業', '所得種別(自由項目4)',
+                '他者借入件数', '他者借入金額', '借入希望金額ID', '借入希望金額',
+                '希望連絡時間帯ID', '希望連絡時間帯', '管理メモ',
+                'IPアドレス', 'ホスト名', 'User-Agent',
+                'ステータス(値)', 'ステータス', '送信カテゴリID', '送信カテゴリ',
+                '削除フラグ', '最終更新日時', '更新日時',
+            ];
+            fputcsv($out, $headings);
+
+            foreach ($rows as $row) {
+                $createdAt = $self->formatExportDateTime($row->created_at);
+                $updatedAt = $self->formatExportDateTime($row->updated_at);
+
+                fputcsv($out, [
+                    $row->id,
+                    $row->form_id,
+                    $createdAt,
+                    $row->name,
+                    $row->kana,
+                    $row->email,
+                    $row->line_id,
+                    $row->company_name,
+                    $row->company_tel,
+                    $row->sex,
+                    $self->mapLabel($sexLabels, $row->sex),
+                    $row->birth_year,
+                    $row->birth_month,
+                    $row->birth_date,
+                    $row->postal_code,
+                    $row->pref_id,
+                    $self->mapLabel($pref, $row->pref_id),
+                    $row->addr1,
+                    $row->addr2,
+                    $row->addr3,
+                    $row->mobile,
+                    $row->tel,
+                    $row->comment,
+                    $row->salary_type,
+                    $row->industry_type,
+                    $row->job_type,
+                    $self->mapLabel($job, $row->job_type),
+                    $row->income_type,
+                    $row->debt_count,
+                    $row->debt_amount,
+                    $row->expectation_amount,
+                    $self->mapLabel($expect, $row->expectation_amount),
+                    $row->connect_hour_type,
+                    $self->mapLabel($connect, $row->connect_hour_type),
+                    $row->memo,
+                    $row->user_ip,
+                    $row->user_host,
+                    $row->user_agent,
+                    $row->status,
+                    $self->mapLabel($statusLabels, $row->status),
+                    $row->sent_category_id,
+                    $self->mapLabel($category, $row->sent_category_id),
+                    $row->del_flg,
+                    $row->last_update_date,
+                    $updatedAt,
+                ]);
+            }
+
+            fclose($out);
+        };
+
+        return new StreamedResponse($callback, 200, $headers);
+    }
+
+    protected function filteredHistoryFormsQuery($form_id, Request $request)
+    {
+        $query = HistoryForm::where('form_id', $form_id);
+        $name = $request->input('name', '');
+        $kana = $request->input('kana', '');
+        $email = $request->input('email', '');
+        $query->when($name, function ($query, $name) {
+            return $query->where('name', 'like', '%'.$name.'%');
+        });
+        $query->when($kana, function ($query, $kana) {
+            return $query->where('kana', 'like', '%'.$kana.'%');
+        });
+        $query->when($email, function ($query, $email) {
+            return $query->where('email', 'like', '%'.$email.'%');
+        });
+
+        return $query;
+    }
+
+    protected function mapLabel($map, $key)
+    {
+        if ($key === null || $key === '') {
+            return '';
+        }
+        if (! is_array($map)) {
+            return '';
+        }
+
+        if (array_key_exists($key, $map)) {
+            return $map[$key];
+        }
+        $stringKey = (string) $key;
+        if (array_key_exists($stringKey, $map)) {
+            return $map[$stringKey];
+        }
+
+        return '';
+    }
+
+    /**
+     * @param  mixed  $value
+     */
+    protected function formatExportDateTime($value): string
+    {
+        if ($value === null || $value === '') {
+            return '';
+        }
+        if ($value instanceof \DateTimeInterface) {
+            return $value->format('Y-m-d H:i:s');
+        }
+
+        return (string) $value;
     }
 
     public function detail($form_id)

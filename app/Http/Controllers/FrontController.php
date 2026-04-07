@@ -2,7 +2,9 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\LeadFormRequest;
 use Illuminate\Http\Request;
+use Illuminate\Support\Str;
 use Carbon\Carbon;
 
 use App\Models\HistoryForm;
@@ -38,13 +40,31 @@ class FrontController extends Controller
         
         return view('home');       
     }
-    public function form()
+    public function form(Request $request)
     {
-        return view('form');       
+        $restore = null;
+        if ($request->query('back') === '1' && session()->has('form_lead_pending')) {
+            $restore = session('form_lead_pending');
+        }
+
+        return view('form', ['restore' => $restore]);
     }
-    public function display()
+
+    public function display(LeadFormRequest $request)
     {
-        return view('display');       
+        $validated = $request->validated();
+        unset($validated['個人情報保護方針']);
+
+        $token = Str::random(40);
+        session([
+            'form_lead_pending' => $validated,
+            'form_lead_token' => $token,
+        ]);
+
+        return view('display', [
+            'lead' => $validated,
+            'confirmToken' => $token,
+        ]);
     }
     public function disclaimer()
     {
@@ -60,11 +80,25 @@ class FrontController extends Controller
     }
     public function post_form(Request $request)
     {
+        $request->validate([
+            'confirm_token' => 'required|string',
+        ]);
 
-        $data = $request->all();
+        if (
+            $request->input('confirm_token') !== session('form_lead_token')
+            || ! is_array(session('form_lead_pending'))
+        ) {
+            return redirect()
+                ->route('form_index')
+                ->withErrors(['session' => '確認画面の有効期限が切れたか、既に送信済みです。お手数ですが最初から入力してください。']);
+        }
+
+        $data = session('form_lead_pending');
+        session()->forget(['form_lead_token', 'form_lead_pending']);
         
         $last = HistoryForm::latest()->first();
-        $target = $last->sent_category_id+1;
+        $lastSentCategoryId = $last ? (int) $last->sent_category_id : 0;
+        $target = $lastSentCategoryId + 1;
         if ($target > 52) {
             $target = 1;
         }
@@ -91,7 +125,7 @@ class FrontController extends Controller
         $form->name = $data['name_sei'].$data['name_mei'];
         $form->kana = $data['name_kana'];
         $form->email = $data['your_mail'];
-        $form->line_id = $data['your_line'];
+        $form->line_id = $data['your_line'] ?? '';
         $form->company_name = $data['your_company'];
         $form->company_tel = $data['your_company_tel'];
         $form->birth_year = $data['birth_year'];
@@ -101,10 +135,10 @@ class FrontController extends Controller
         $form->pref_id = $data['pref_id'];
         $form->addr1 = $data['addr1'];
         $form->addr2 = $data['addr2'];
-        $form->addr3 = $data['addr3'];
+        $form->addr3 = $data['addr3'] ?? '';
         $form->mobile = $data['your_mobile'];
-        $form->tel = $data['your_tel'];
-        $form->comment = $data['your_message'];
+        $form->tel = $data['your_tel'] ?? '';
+        $form->comment = $data['your_message'] ?? '';
         $form->salary_type = $data['income'];
         $form->job_type = $data['job'];
         $form->debt_count = $data['your_borrowing_num'];
@@ -127,7 +161,7 @@ class FrontController extends Controller
             '%%name%%' => $data['name_sei'].$data['name_mei'],
             '%%email%%' => $data['your_mail'],
             '%%kana%%' => $data['name_kana'],
-            '%%line_id%%' => $data['your_line'],
+            '%%line_id%%' => $data['your_line'] ?? '',
             '%%company_name%%' => $data['your_company'],
             '%%company_tel%%' => $data['your_company_tel'],
             '%%birthday%%' => $data['birth_year'].'年'.$data['birth_month'].'月'.$data['birth_date'].'日',
@@ -135,8 +169,8 @@ class FrontController extends Controller
             '%%pref_id%%' => $pref[$data['pref_id']],
             '%%addr1%%' => $data['addr1'],
             '%%addr2%%' => $data['addr2'],
-            '%%addr3%%' => $data['addr3'],
-            '%%tel%%' => $data['your_tel'],
+            '%%addr3%%' => $data['addr3'] ?? '',
+            '%%tel%%' => $data['your_tel'] ?? '',
             '%%mobile%%' => $data['your_mobile'],
             '%%job_type%%' => $job[$data['job']],
             '%%income%%' => $data['income'],
@@ -144,23 +178,24 @@ class FrontController extends Controller
             '%%debt_amount%%' => $data['your_borrowing_num2'],
             '%%expectation_amount%%' => $data['desired_borrowing'],
             '%%connect_hour_type%%' => $connect[$data['time']],
-            '%%comment%%' => $data['your_message'],
+            '%%comment%%' => $data['your_message'] ?? '',
             '%%user_ip%%' => $_SERVER["REMOTE_ADDR"],
             '%%user_host%%' => $user_host,
             '%%user_agent%%' => $user_agent,
             '%%created_at%%' => date('Y-m-d')
         ];
 
-        $dtb_form = Forms::where('id',1)->first();
-        $mail_body = $dtb_form->mail_body;
-        $message = str_replace(array_keys($placeholders), array_values($placeholders), $mail_body);
-        $mail_data['message'] = nl2br($message);
-        // $mail_data['from_email'] = $dtb_form->from_email;
-        $mail_data['from_email'] = 'machida.japan.1982@japanhub.co';
-        $mail_data['from_name'] = $dtb_form->from_name;
-        $mail_data['subject'] = $dtb_form->mail_title;
+        $dtb_form = Forms::where('id', 1)->first();
+        if ($dtb_form) {
+            $mail_body = $dtb_form->mail_body;
+            $message = str_replace(array_keys($placeholders), array_values($placeholders), $mail_body);
+            $mail_data['message'] = nl2br($message);
+            $mail_data['from_email'] = 'machida.japan.1982@japanhub.co';
+            $mail_data['from_name'] = $dtb_form->from_name;
+            $mail_data['subject'] = $dtb_form->mail_title;
 
-        Mail::to($data['your_mail'])->send(new ReplyEmail($mail_data));
+            Mail::to($data['your_mail'])->send(new ReplyEmail($mail_data));
+        }
 
         return redirect('/thanks');        
     }
@@ -320,7 +355,8 @@ class FrontController extends Controller
 
     public function test(){
         $last = HistoryForm::latest()->first();
-        $target = $last->sent_category_id+2;
+        $lastSentCategoryId = $last ? (int) $last->sent_category_id : 0;
+        $target = $lastSentCategoryId + 2;
         if ($target > 52) {
             $target = 1;
         }

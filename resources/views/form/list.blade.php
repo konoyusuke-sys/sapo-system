@@ -79,7 +79,9 @@
 							<span class="label label-info">該当件数</span> {{$lists->total()}} 件
 						</div>
 						<div class="pull-left">
-							
+							<a href="{{ route('form.list.export', ['form_id' => $form_id] + request()->only(['name', 'kana', 'email'])) }}" class="btn btn-sm btn-success" style="margin-left:8px;">
+								<i class="fa fa-download"></i> CSVダウンロード（全件・検索条件適用）
+							</a>
 						</div>
 					</div>
 				</div>

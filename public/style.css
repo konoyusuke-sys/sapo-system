@@ -1,0 +1,516 @@
+/*ーーーーーーーーーーーーー全体設定｜ALLーーーーーーーーーーーーーー*/
+html { scroll-behavior: smooth;}
+
+body{
+	margin:0px;
+}
+img{
+	vertical-align:top;
+}
+h1{
+	margin: 0px;
+}
+h2{
+	margin: 0px;
+}
+header{
+	height: 55px;
+}
+
+
+.f_required{
+	background-color: #E08A25;
+	color: #FFF;
+	margin-left: 10px;
+	padding: 5px;
+	border-radius: 5px;
+	font-size: 10px;
+}
+.f_free{
+	background-color: #404040;
+	color: #FFF;
+	margin-left: 10px;
+	padding: 5px;
+	border-radius: 5px;
+	font-size: 10px;
+}
+.other_free{
+	margin-bottom: 10px;
+}
+
+
+
+.sp_container{
+	max-width: 480px;
+	margin-left: auto;
+	margin-right: auto;
+}
+.flex{
+	display: flex;
+}
+.widthhalf{
+	width: 50%;
+}
+.headertitlecrm{
+	padding-left: 20px;
+	margin: auto;
+}
+.header_title{
+	width: 60%;
+}
+.headerctacrm{
+	text-align: right;
+	padding-right: 20px;
+	margin: auto;
+}
+.header_cta{
+	width: 80%;
+}
+.title{
+	font-family: 'Zen Kaku Gothic New';
+	font-size: 20px;
+	font-weight: 700;
+	line-height: 1.45;
+	letter-spacing: em;
+	color: #02185F;
+}
+
+
+/*ーーーーーーーーーーーーーファーストビュー｜FVーーーーーーーーーーーーーー*/
+.spkv{
+	width: 100%;
+	height: 100%;
+}
+
+
+
+/*ーーーーーーーーーーーーーセクション１｜こんなお悩みありませんかーーーーーーーーーーーーーー*/
+.sec01{
+	padding-top: 40px;
+	padding-bottom: px;
+	background-color: #F8F8F8;
+}
+.sec01container{
+	text-align: center;
+}
+.fup28{
+	font-size: 28px;
+}
+.sec01il{
+	width: 71%;
+	margin-top: 30px;
+	margin-bottom: 30px;
+}
+.sec01img{
+	width: 100%;
+}
+
+/*ーーーーーーーーーーーーーセクション2｜カリマッチでは・・・ーーーーーーーーーーーーーー*/
+.sec02{
+	padding-top: 40px;
+	padding-bottom: 40px;
+	background-color: #EDF0F4;
+}
+.sec02container{
+	text-align: center;
+	padding-left: 20px;
+	padding-right: 20px;
+
+}
+.sec02title{
+	width: 70%;
+}
+.sec02box{
+	background-color: #FFF;
+	padding: 25px;
+	border-radius: 10px;
+	margin-top: 32px;
+	margin-bottom: 11px;
+}
+.sec02box_title{
+	font-family: 'Zen Kaku Gothic New';
+	font-size: 16px;
+	font-weight: 700;
+	line-height: 1.43;
+	letter-spacing: em;
+	color: #E08A25;
+}
+.contents_left{
+	width: 30%;
+	text-align: left;
+	font-family: 'Zen Kaku Gothic New';
+	font-size: 12px;
+	font-weight: 700;
+	line-height: 1.45;
+	letter-spacing: em;
+	color: #02185F;
+}
+.contents_right{
+	width: 70%;
+	text-align: left;
+	font-family: 'Zen Kaku Gothic New';
+	font-size: 12px;
+	font-weight: 500;
+	line-height: 1.45;
+	letter-spacing: em;
+	color: #02185F;
+}
+.contents01{
+
+}
+.annotation{
+	font-family: 'Zen Kaku Gothic New';
+	font-size: 11px;
+	font-weight: 500;
+	line-height: 1.45;
+	letter-spacing: em;
+	color: #02185F;
+	text-align: left;
+}
+.simulation{
+	height: 45px;
+	width: 77%;
+	background-color: #02185F;
+	color: #FFF;
+	border-radius: 50px;
+	border: none;
+	margin-top: 30px;
+}
+
+/*ーーーーーーーーーーーーーセクション2｜カリマッチでは・・・ーーーーーーーーーーーーーー*/
+.sec03{
+	background-image: url('./image/sec03back.png');
+}
+
+.sec03container{
+	padding-top: 40px;
+	padding-bottom: 40px;
+	padding-left: 20px;
+	padding-right: 20px;
+	text-align: center;
+}
+.step_box{
+	margin-top: 40px;
+}
+.step01{
+	width: 100%;
+}
+.step01il{
+	width: 51%;
+	margin-top: 25px;
+	margin-bottom: 20px;
+}
+.cta02{
+	width: 77%;
+}
+.step02{
+	width: 100%;
+}
+.step02il{
+	width: 51%;
+	margin-top: 25px;
+	margin-bottom: 20px;
+}
+.step03{
+	width: 100%;
+}
+.step03il{
+	width: 51%;
+	margin-top: 25px;
+	margin-bottom: 20px;
+}
+
+.steptitle{
+	font-family: 'Zen Kaku Gothic New';
+	font-size: 24px;
+	font-weight: 700;
+	line-height: 1.45;
+	letter-spacing: em;
+	color: #02185F;
+}
+.steptext{
+	font-family: 'Zen Kaku Gothic New';
+	font-size: 11px;
+	font-weight: 500;
+	line-height: 1.45;
+	letter-spacing: em;
+	color: #02185F;
+}
+
+/*ーーーーーーーーーーーーーセクション4｜利用前に知って安心・・・ーーーーーーーーーーーーーー*/
+.sec04{
+	background-color: #EDF0F4;
+	padding-top: 40px;
+	padding-bottom: 40px;
+}
+.sec04container{
+	padding-left: 20px;
+	padding-right: 20px;
+	text-align: center;
+}
+.sec04_title{
+	font-family: 'Zen Kaku Gothic New';
+	font-size: 20px;
+	font-weight: 700;
+	line-height: 1.5;
+	letter-spacing: em;
+	color: #02185F;
+}
+.sec04il01{
+	width: 100%;
+	margin-top: 15px;
+	margin-bottom: 10px;
+}
+.sec04il02{
+	width: 100%;
+}
+.sec04il03{
+	width: 100%;
+	margin-top: 10px;
+	margin-bottom: 30px;
+}
+
+/*ーーーーーーーーーーーーーセクション5｜利用前に知って安心・・・ーーーーーーーーーーーーーー*/
+.sec05{
+	padding-top: 40px;
+	padding-bottom: 40px;
+}
+.sec05container{
+	padding-left: 20px;
+	padding-right: 20px;
+	text-align: center;
+}
+.sec04text{
+	width: 64%;
+}
+.graph{
+	width: 100%;
+	margin-top: 30px;
+	margin-bottom: 5px;
+}
+
+
+
+
+
+footer{
+	background-color: #02185F;
+	font-family: 'Zen Kaku Gothic New';
+	font-size: 12px;
+	font-weight: 400;
+	line-height: 1.45;
+	letter-spacing: em;
+	height: 52.5px;
+	text-align: center;
+	padding-top: 15px;
+	padding-bottom: 15px;
+}
+ul {
+	overflow:hidden;
+	list-style:none;
+	margin: 0 auto;
+	z-index: 20;
+}
+.navi{
+	justify-content: space-around;
+	padding-left: 30px;
+	padding-right: 30px;
+}
+.navi_contents{
+	color: #fff!important;
+	text-decoration: none;
+}
+.copy{
+	color: #fff!important;
+}
+
+
+
+
+
+
+
+/*ーーーーーーーーーーーーー免責ページーーーーーーーーーーーーーー*/
+.sp_disclaimer{
+	background-color: #EDF0F4;
+}
+.disclaimer_sec01{
+	padding-top: 40px;
+	padding-bottom: 40px;
+	width: 80%;
+	margin-left: auto;
+	margin-right: auto;
+	text-align: center;
+}
+.u_title{
+	font-family: 'Zen Kaku Gothic New';
+	font-size: 28px;
+	font-weight: 700;
+	line-height: 1.5;
+	letter-spacing: em;
+	color: #02185F;
+	text-align: center;
+}
+.u_text{
+	font-family: 'Zen Kaku Gothic New';
+	font-size: 14px;
+	font-weight: 500;
+	line-height: 1.5;
+	letter-spacing: em;
+	color: #02185F;
+}
+
+/*ーーーーーーーーーーーーープラポリページーーーーーーーーーーーーーー*/
+.sp_policy{
+	background-color: #EDF0F4;
+}
+.policy_sec01{
+	padding-top: 40px;
+	padding-bottom: 40px;
+	width: 80%;
+	margin-left: auto;
+	margin-right: auto;
+}
+.p_title{
+	font-family: 'Zen Kaku Gothic New';
+	font-size: 28px;
+	font-weight: 700;
+	line-height: 1.5;
+	letter-spacing: em;
+	color: #02185F;
+}
+.p_sub{
+	font-family: 'Zen Kaku Gothic New';
+	font-size: 16px;
+	font-weight: 700;
+	line-height: 1.5;
+	letter-spacing: em;
+	color: #02185F;
+}
+.p_text{
+	font-family: 'Zen Kaku Gothic New';
+	font-size: 14px;
+	font-weight: 500;
+	line-height: 1.5;
+	letter-spacing: em;
+	color: #02185F;
+}
+.policy_img{
+	width: 100%;
+}
+
+/*ーーーーーーーーーーーーーフォームーーーーーーーーーーーーーー*/
+.sp_form{
+	
+}
+.form_sec01{
+	padding-top: 40px;
+	padding-bottom: 40px;
+	width: 80%;
+	margin-left: auto;
+	margin-right: auto;
+}
+.f_sectitle{
+	font-family: 'Zen Kaku Gothic New';
+	font-size: 28px;
+	font-weight: 700;
+	line-height: 1.5;
+	letter-spacing: em;
+	color: #02185F;
+}
+.application_sec{
+	padding-left: 20px;
+	padding-right: 20px;
+}
+.f_title{
+	font-family: 'Zen Kaku Gothic New';
+	font-size: 16px;
+	font-weight: 500;
+	line-height: 1.5;
+	letter-spacing: em;
+	color: #02185F;
+}
+.f_text{
+	font-family: 'Zen Kaku Gothic New';
+	font-size: 14px;
+	font-weight: 500;
+	line-height: 1.5;
+	letter-spacing: em;
+	color: #02185F;
+}
+input{
+	width: 100%;
+	height: 40px;
+	margin-top: 10px!important;
+	margin:auto;
+}
+dd{
+	margin-left: 0px;
+}
+select{
+	height: 40px;
+	margin-top: 10px;
+}
+textarea{
+	width: 100%;
+	height: 200px;
+}
+#agreement{
+	height: 20px!important;
+	width: auto;
+	margin: auto;
+}
+.checkbox-txt{
+	padding-left: 20px;
+	margin-bottom: 5px;
+}
+.formErrorContent{
+	text-align: center;
+}
+.submit-wrapper{
+	text-align: center;
+}
+.btn_submit{
+	width: 80%;
+	border-radius: 100px;
+	background-color: #02185F;
+	color: #FFF;
+	border: none;
+	margin-bottom: 50px;
+	margin-left: auto;
+	margin-right: auto;
+}
+
+/*ーーーーーーーーーーーーーサンクスページーーーーーーーーーーーーーー*/
+.thanks_sec01{
+	padding-top: 40px;
+	padding-bottom: 40px;
+	width: 80%;
+	margin-left: auto;
+	margin-right: auto;
+}
+.t_title{
+	font-family: 'Zen Kaku Gothic New';
+	font-size: 18px;
+	font-weight: 700;
+	line-height: 1.5;
+	letter-spacing: em;
+	color: #02185F;
+}
+
+
+@media screen and (max-width: 767px){
+
+}
+
+@media screen and (min-width: 761px) {
+	.sp-container{
+		display: none;
+	}
+}
+
+@media only screen and (max-width: 760px) {
+	.pc-container{
+		display: none;
+	}
+}

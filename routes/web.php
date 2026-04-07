@@ -34,6 +34,7 @@ Route::get('/form', 'App\Http\Controllers\FormController@index')->name('form.ind
 Route::get('/form/detail/{id}', 'App\Http\Controllers\FormController@detail')->name('form.detail');
 Route::post('/form/detail/update', 'App\Http\Controllers\FormController@update_form')->name('form.update');
 
+Route::get('/form/list/{form_id}/export', 'App\Http\Controllers\FormController@exportHistoryCsv')->name('form.list.export');
 Route::get('/form/list/{id}', 'App\Http\Controllers\FormController@list')->name('form.list');
 
 Route::get('/form/group/{id}', 'App\Http\Controllers\FormController@group_index')->name('form.group.index');

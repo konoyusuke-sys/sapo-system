@@ -1,0 +1,946 @@
+html {
+	scroll-behavior: smooth;
+	font-family: 'Noto Sans JP', sans-serif;
+	font-weight: 600;
+}
+
+main#main {
+	position: relative;
+	overflow-x: hidden;
+}
+
+.mainvisual {
+	position: relative;
+	margin-top: 90px;
+
+
+	@include media('sp') {
+		margin-top: 9rem;
+	}
+
+	.application-wrapper {
+		padding: 0 30px;
+
+		@include media('sp') {
+			padding: 0 3rem;
+		}
+	}
+
+	&-wrapper {
+		position: relative;
+		width: 100%;
+		// margin-bottom: 50px;
+
+		.main-img {
+			width: 100%;
+		}
+
+		@include media('sp') {
+			// margin-bottom: 5rem;
+		}
+	}
+
+	&-tit {
+		color: $white_color;
+		line-height: 1.5;
+		letter-spacing: 2px;
+		font-size: 31px;
+		font-weight: 600;
+
+		@include media('sp') {
+			letter-spacing: 0.2rem;
+			font-size: 3.1rem;
+		}
+
+		.big-tit {
+			font-size: 45px;
+			font-style: italic;
+
+			.blue-txt {
+				color: $blue_color;
+			}
+
+			.red-txt {
+				color: $red_color;
+			}
+
+			@include media('sp') {
+				font-size: 4.5rem;
+			}
+		}
+	}
+
+	&-desc {
+		font-size: 19px;
+		color: $white_color;
+
+		@include media('sp') {
+			font-size: 1.9rem;
+		}
+	}
+
+	.tit-wrapper {
+		position: relative;
+		margin-bottom: 25px;
+
+		@include media('sp') {
+			margin-bottom: 2.5rem;
+		}
+
+		&::after {
+			content: "";
+			position: absolute;
+			background-image: url(../img/person.png);
+			background-position: center;
+			background-repeat: no-repeat;
+			background-size: cover;
+			bottom: -25px;
+			right: -10px;
+			width: 190px;
+			height: 135px;
+			z-index: 0;
+
+			@include media('sp') {
+				bottom: -2.5rem;
+				right: -1rem;
+				width: 19rem;
+				height: 13.5rem;
+			}
+		}
+	}
+
+	.main-feature {
+		display: flex;
+		justify-content: space-between;
+		text-align: center;
+
+		.feature-item {
+			position: relative;
+			padding: 20px;
+			letter-spacing: 1px;
+			background-color: $white_color;
+			color: #1aae41;
+			box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.2);
+			border-bottom-right-radius: 30px;
+
+			@include media('sp') {
+				padding: 2rem;
+				letter-spacing: 0.1rem;
+				box-shadow: 0rem 0rem 1rem rgba(0, 0, 0, 0.2);
+				border-bottom-right-radius: 3rem;
+			}
+
+			&::before {
+				content: "";
+				top: 0;
+				left: 0;
+				border-bottom: 64px solid transparent;
+				border-left: 64px solid $main_color;
+				position: absolute;
+				z-index: 0;
+
+				@include media('sp') {
+					border-bottom: 6.4rem solid transparent;
+					border-left: 6.4rem solid $main_color;
+				}
+			}
+		}
+
+		span {
+			font-size: 19px;
+			line-height: 2.5;
+
+			@include media('sp') {
+				font-size: 1.9rem;
+			}
+		}
+
+		p {
+			font-size: 20px;
+			font-weight: 600;
+			line-height: 2;
+
+			@include media('sp') {
+				font-size: 2rem;
+			}
+		}
+
+		h2 {
+			font-size: 33px;
+			font-weight: 600;
+
+			@include media('sp') {
+				font-size: 3.3rem;
+			}
+		}
+	}
+}
+
+.problem-sec {
+	padding: 20px 0;
+	background-color: $bg-color;
+	background-image: url(../img/bg_dot.png);
+
+	.pbm-tit {
+		margin-top: 25px;
+		margin-bottom: 45px;
+		text-align: center;
+		font-size: 25px;
+		font-weight: 600;
+		border-top: 2px solid $main_color;
+		border-bottom: 2px solid $main_color;
+		letter-spacing: 2px;
+		padding: 20px 0;
+		color: $pink_color;
+
+		@include media('sp') {
+			margin-top: 2.5rem;
+			margin-bottom: 4.5rem;
+			font-size: 2.5rem;
+			border-top: 0.2px solid $main_color;
+			border-bottom: 0.2rem solid $main_color;
+			letter-spacing: 0.2rem;
+			padding: 2rem 0;
+		}
+	}
+
+	.pbm-feature {
+		margin-bottom: 50px;
+		display: flex;
+		justify-content: space-evenly;
+
+		@include media('sp') {
+			margin-bottom: 5rem;
+		}
+
+		.feature-item {
+			position: relative;
+			padding: 20px;
+			letter-spacing: 1px;
+			font-weight: 500;
+			box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.2);
+			font-size: 20px;
+			line-height: 1.5;
+			border-top-left-radius: 15px;
+			background-color: $white_color;
+
+			@include media('sp') {
+				padding: 2rem;
+				letter-spacing: 0.1rem;
+				box-shadow: 0rem 0rem 1rem rgba(0, 0, 0, 0.2);
+				font-size: 2rem;
+				border-top-left-radius: 1.5rem;
+			}
+
+			&::before {
+				content: "";
+				bottom: 0;
+				right: 0;
+				border-top: 24px solid transparent;
+				border-right: 24px solid $main_color;
+				position: absolute;
+				z-index: 0;
+
+				@include media('sp') {
+					border-top: 2.4rem solid transparent;
+					border-right: 2.4rem solid $main_color;
+				}
+			}
+		}
+	}
+
+	.pbm-desc {
+		text-align: center;
+		margin-bottom: 20px;
+		font-size: 40px;
+		font-weight: 600;
+		letter-spacing: 2px;
+		color: $blue_color;
+
+		@include media('sp') {
+			margin-bottom: 2rem;
+			font-size: 4rem;
+			letter-spacing: 0.2rem;
+		}
+	}
+}
+
+.product-content {
+	background-color: $secondary_color;
+	padding-bottom: 30px;
+
+	@include media('sp') {
+		padding-bottom: 3rem;
+	}
+
+	.triangle {
+		text-align: center;
+		position: relative;
+		width: 100%;
+		height: 90px;
+
+		@include media('sp') {
+			height: 9rem;
+		}
+
+		&-txt {
+			display: flex;
+			justify-content: center;
+			align-items: center;
+			width: 100%;
+			height: 100%;
+			position: absolute;
+			z-index: 99;
+			color: $white_color;
+			font-size: 25px;
+			text-align: center;
+			top: -5px;
+
+			@include media('sp') {
+				font-size: 2.5rem;
+				top: -0.5rem;
+			}
+		}
+
+		&::before {
+			position: absolute;
+			content: "";
+			left: 0;
+			top: 0;
+			width: 0%;
+			height: 0px;
+			border-style: solid;
+			border-width: 90px 320px 0 320px;
+			border-color: $main_color transparent transparent transparent;
+			transform: rotate(0deg);
+
+			@include media('sp') {
+				border-width: 9rem 32rem 0 32rem;
+			}
+		}
+	}
+
+	.table-wrapper {
+		padding: 0 30px;
+
+		@include media('sp') {
+			padding: 0 3rem;
+		}
+	}
+
+	.product-table {
+		margin-top: 10px;
+		padding: 0 30px;
+		width: 100%;
+		border: 2px solid $main_color;
+
+		@include media('sp') {
+			margin-top: 1rem;
+			padding: 0 3rem;
+			border: 0.2rem solid $main_color;
+		}
+	}
+
+	table,
+	tr,
+	td {
+		border: 2px solid $main_color;
+		border-collapse: collapse;
+
+		@include media('sp') {
+			border: 0.2rem solid $main_color;
+		}
+	}
+
+	td {
+		padding: 15px;
+		max-height: 100%;
+		vertical-align: middle;
+		font-size: 22px;
+		letter-spacing: 2px;
+
+		@include media('sp') {
+			padding: 1.5rem;
+			font-size: 2.2rem;
+			letter-spacing: 0.2rem;
+		}
+
+		&:first-child {
+			width: 30%;
+			text-align: center;
+			background-color: #1aae41;
+			color: $white_color;
+			font-weight: 600;
+		}
+
+		&:nth-child(2) {
+			width: 70%;
+		}
+	}
+
+	.product-attention {
+		margin-top: 20px;
+		margin-bottom: 20px;
+		line-height: 1.5;
+		letter-spacing: 2px;
+		font-size: 20px;
+
+		@include media('sp') {
+			margin-top: 2rem;
+			margin-bottom: 2rem;
+			letter-spacing: 0.2rem;
+			font-size: 2rem;
+		}
+	}
+}
+
+.workflow-sec {
+	background-color: #f9f8f3;
+	background-image: url(../img/bg_dot.png);
+	padding: 0 30px 30px 30px;
+
+	@include media('sp') {
+		padding: 0 3rem 3rem 3rem;
+	}
+
+	text-align: center;
+
+	.workflow-tit {
+		padding-top: 40px;
+		margin-bottom: 60px;
+		font-size: 40px;
+		color: $main_color;
+
+		@include media('sp') {
+			padding-top: 4rem;
+			margin-bottom: 6rem;
+			font-size: 4rem;
+		}
+	}
+
+	.form-tit {
+		font-size: 40px;
+		margin-bottom: 10px;
+		color: $blue_color;
+
+		@include media('sp') {
+			font-size: 4rem;
+			margin-bottom: 1rem;
+		}
+	}
+
+	.form-desc {
+		font-size: 25px;
+		margin-bottom: 60px;
+
+		@include media('sp') {
+			margin-bottom: 6rem;
+			font-size: 2.5rem;
+		}
+	}
+}
+
+.usage-sec {
+	padding: 30px;
+	background-color: $secondary_color;
+
+	@include media('sp') {
+		padding: 3rem;
+	}
+
+	.usage-tit {
+		font-size: 40px;
+		padding-top: 60px;
+		padding-bottom: 60px;
+		font-weight: 600;
+		text-align: center;
+		color: $blue_color;
+
+		@include media('sp') {
+			font-size: 4rem;
+			padding-top: 6rem;
+			padding-bottom: 6rem;
+		}
+	}
+}
+
+.btn-desc {
+	position: relative;
+	font-size: 30px;
+	letter-spacing: 2px;
+	margin-bottom: 10px;
+	width: max-content;
+	margin-left: auto;
+	margin-right: auto;
+
+	@include media('sp') {
+		font-size: 3rem;
+		letter-spacing: 0.2rem;
+		margin-bottom: 1rem;
+	}
+
+	&::before {
+		position: absolute;
+		content: "";
+		width: 35px;
+		height: 40px;
+		top: -5px;
+		left: -15%;
+		border-right: 2px solid black;
+		transform: rotate(135deg);
+
+		@include media('sp') {
+			width: 3.5rem;
+			height: 4rem;
+			top: -0.5rem;
+			border-right: 0.2px solid black;
+		}
+	}
+
+	&::after {
+		position: absolute;
+		content: "";
+		width: 35px;
+		height: 40px;
+		top: -5px;
+		right: -10%;
+		border-right: 2px solid black;
+		transform: rotate(45deg);
+
+		@include media('sp') {
+			width: 3.5rem;
+			height: 4rem;
+			top: -0.5rem;
+			border-right: 0.2px solid black;
+		}
+	}
+}
+
+.org-sec {
+	padding: 50px 30px;
+	background-color: $bg-color;
+	background-image: url(../img/bg_dot.png);
+
+	@include media('sp') {
+		padding: 5rem 3rem;
+	}
+
+	h3 {
+		text-align: center;
+		color: $blue_color;
+		font-size: 30px;
+		margin-bottom: 10px;
+		font-weight: 600;
+
+		@include media('sp') {
+			font-size: 3rem;
+			margin-bottom: 1rem;
+		}
+	}
+
+	.org-table {
+		width: 100%;
+		margin-bottom: 15px;
+
+		@include media('sp') {
+			margin-bottom: 1.5rem;
+		}
+	}
+
+	table,
+	tr,
+	td {
+		border: 1px solid $main_color;
+
+		@include media('sp') {
+			border: 0.1rem solid $main_color;
+		}
+	}
+
+	td {
+		text-align: center;
+		padding: 10px;
+		font-size: 20px;
+
+		@include media('sp') {
+			padding: 1rem;
+			font-size: 2rem;
+		}
+
+		&:nth-child(odd) {
+			background-color: $secondary_color;
+		}
+
+		&:first-child {
+			color: $white_color;
+			background-color: $main_color;
+		}
+	}
+
+	.table-desc {
+		font-size: 18px;
+		line-height: 1.8;
+
+		@include media('sp') {
+			font-size: 1.8rem;
+		}
+	}
+}
+
+.application-sec {
+	background-color: $secondary_color;
+	padding: 60px 30px;
+
+	@include media('sp') {
+		padding: 6rem 3rem;
+	}
+
+	.line {
+		text-align: center;
+		font-size: 40px;
+		margin: 30px 0;
+		color: $blue_color;
+		font-weight: 600;
+
+		@include media('sp') {
+			font-size: 4rem;
+			margin: 3rem 0;
+		}
+	}
+
+	textarea {
+		height: 180px;
+
+		@include media('sp') {
+			height: 18rem;
+		}
+	}
+
+	input[type="text"],
+	input[type="email"],
+	textarea, select {
+		position: relative;
+		border: 2px solid $main_color;
+		background-color: $white_color;
+		font-size: 20px;
+		padding: 20px;
+		margin-bottom: 10px;
+		box-sizing: border-box;
+		width: 100%;
+
+		@include media('sp') {
+			border: 0.2rem solid $main_color;
+			font-size: 2rem;
+			padding: 2rem;
+			margin-bottom: 1rem;
+		}
+	}
+
+	input[type="text"].w50 {
+		width: 80%;
+		margin-left: 3%;
+	}
+
+	dl {
+		box-sizing: border-box;
+		display: block;
+		flex-basis: auto;
+		max-width: none;
+		width: 100%;
+
+		dt {
+			position: relative;
+			margin-bottom: 5px;
+			padding: 10px 10px 10px 25px;
+			background: $main_color;
+			color: $white_color;
+			font-size: 22px;
+
+			box-sizing: border-box;
+			display: block;
+			flex-basis: auto;
+			max-width: none;
+			width: 100%;
+
+			@include media('sp') {
+				margin-bottom: 0.5rem;
+				padding: 1rem 1rem 1rem 2.5rem;
+				font-size: 2.2rem;
+			}
+
+			&::before {
+				content: "";
+				bottom: 3px;
+				right: 3px;
+				border-top: 20px solid transparent;
+				border-right: 20px solid $white_color;
+				position: absolute;
+				z-index: 0;
+
+				@include media('sp') {
+					bottom: 0.3rem;
+					right: 0.3rem;
+					border-top: 2rem solid transparent;
+					border-right: 2rem solid $white_color;
+				}
+			}
+		}
+
+		dd {
+			padding: 10px;
+			box-sizing: border-box;
+			display: block;
+			flex-basis: auto;
+			max-width: none;
+			width: 100%;
+
+			@include media('sp') {
+				padding: 1rem;
+			}
+		}
+	}
+
+	.req {
+		dt {
+			&::after {
+				content: "必須";
+				width: 50px;
+				font-size: 18px;
+				padding: 3px 15px;
+				letter-spacing: 2px;
+				margin-left: 15px;
+				border-radius: 3px;
+				height: auto;
+				background-color: $red_color;
+				color: $white_color;
+
+				@include media('sp') {
+					width: 5rem;
+					font-size: 1.8rem;
+					padding: 0.3rem 1.5rem;
+					letter-spacing: 0.2rem;
+					margin-left: 1.5rem;
+					border-radius: 0.3rem;
+				}
+			}
+		}
+	}
+
+	.any {
+		dt {
+			&::after {
+				content: "任意";
+				width: 50px;
+				font-size: 18px;
+				padding: 3px 15px;
+				letter-spacing: 2px;
+				margin-left: 15px;
+				border-radius: 3px;
+				height: auto;
+				background-color: #404040;
+				color: $white_color;
+
+				@include media('sp') {
+					width: 5rem;
+					font-size: 1.8rem;
+					padding: 0.3rem 1.5rem;
+					letter-spacing: 0.2rem;
+					margin-left: 1.5rem;
+					border-radius: 0.3rem;
+				}
+			}
+		}
+	}
+
+	.col2 {
+		display: flex;
+		flex-direction: column;
+		font-size: 22px;
+		padding-left: 15px;
+
+		@include media('sp') {
+			font-size: 2.2rem;
+			padding-left: 1.5rem;
+		}
+	}
+
+	.caption {
+		font-size: 18px;
+		margin-bottom: 15px;
+		line-height: 1.8;
+
+		@include media('sp') {
+			font-size: 1.8rem;
+			margin-bottom: 1.5rem;
+		}
+	}
+
+	select {
+		display: block;
+		position: relative;
+		border: 2px solid $main_color;
+		background-color: $white_color;
+		font-size: 18px;
+		box-sizing: border-box;
+		padding: 10px;
+		width: 100%;
+		height: auto;
+
+		@include media('sp') {
+			border: 0.2rem solid $main_color;
+			font-size: 1.8rem;
+			padding: 1rem;
+		}
+	}
+
+	.birthday {
+		margin-right: 20px;
+		font-size: 20px;
+
+		select {
+			width: 150px;
+
+			@include media('sp') {
+				width: 15rem;
+			}
+		}
+
+		@include media('sp') {
+			margin-right: 2rem;
+			font-size: 2rem;
+		}
+	}
+}
+
+
+
+
+///////////
+/// 
+/// 
+#application dl dt {
+	flex-shrink: 0;
+	padding-right: 2rem;
+}
+
+#application dl dd {
+	flex-grow: 1;
+}
+
+#application dl.last {
+	border-bottom: 1px solid #b5b5b5;
+}
+
+#application dl dt a {
+	color: #0d8dca;
+	padding-right: 30px;
+	display: inline-block;
+}
+
+#application dl dt a:hover {
+	text-decoration: underline;
+}
+
+#application dl dd small.example {
+	display: block;
+	letter-spacing: 0.1em;
+	margin-top: -1em;
+	margin-bottom: 0.5em;
+}
+
+#application dl dd em {
+	font-weight: 400;
+	color: #f05a23;
+}
+
+#application .formErrorContent {
+	word-break: keep-all;
+	background-color: #ee0000;
+	color: #fff;
+	display: inline-block;
+	padding: 8px;
+	margin-top: 55px;
+	font-size: 15px;
+	position: relative;
+
+	@include media('sp') {
+		padding: 0.8rem;
+		margin-top: 5.5rem;
+		font-size: 1.5rem;
+	}
+}
+
+.checkbox-valid {
+	display: none;
+}
+
+#application .err_email,
+#application .err {
+	word-break: keep-all;
+	background-color: #ee0000;
+	color: #fff;
+	display: inline-block;
+	padding: 8px;
+	margin-bottom: 8px;
+	font-size: 15px;
+	position: relative;
+
+	@include media('sp') {
+		padding: 0.8rem;
+		margin-bottom: 0.8rem;
+		font-size: 1.5rem;
+	}
+}
+
+.chk_checkbox {
+	position: realtive;
+}
+
+#application .err.abs {
+	left: 0px;
+	top: 2rem;
+	position: absolute;
+}
+
+#application .col3.w500 {
+	margin-left: 0px;
+}
+
+#application dl dd label {
+	margin-right: 2rem;
+	display: inline-block;
+}
+
+#application dl dd label span {
+	padding-left: 1.5rem;
+	position: relative;
+}
+
+#application dl dd label span:before {
+	content: "";
+	display: block;
+	position: absolute;
+	left: 0px;
+	top: 0.1em;
+	width: 1rem;
+	height: 1rem;
+	border: 1px solid #000;
+}
+
+.submit-wrapper {
+	margin-top: 80px;
+
+	@include media('sp') {
+		margin-top: 8rem;
+	}
+}
+
+.buttons-wrapper {
+	margin-top: 85px;
+
+	@include media('sp') {
+		margin-top: 8.5rem;
+	}
+}
+
+
