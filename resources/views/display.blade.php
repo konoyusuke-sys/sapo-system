@@ -13,14 +13,84 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>カリマッチ</title>
   <link rel="stylesheet" type="text/css" href="{{ asset('style.css') }}">
+  <style>
+    .submit-loading-overlay {
+      display: none;
+      position: fixed;
+      inset: 0;
+      z-index: 99999;
+      align-items: center;
+      justify-content: center;
+      flex-direction: column;
+      background: rgba(0, 0, 0, 0.55);
+      -webkit-tap-highlight-color: transparent;
+    }
+    .submit-loading-overlay.is-visible { display: flex; }
+    .submit-loading-box {
+      width: 88%;
+      max-width: 320px;
+      padding: 1.5rem 1.25rem 1.75rem;
+      background: #fff;
+      border-radius: 12px;
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+      text-align: center;
+      box-sizing: border-box;
+    }
+    .submit-loading-spinner {
+      width: 44px;
+      height: 44px;
+      margin: 0 auto 1rem;
+      border: 4px solid #e8e8e8;
+      border-top-color: #333;
+      border-radius: 50%;
+      animation: submit-spin 0.75s linear infinite;
+    }
+    @keyframes submit-spin {
+      to { transform: rotate(360deg); }
+    }
+    .submit-loading-title {
+      font-size: 1.1rem;
+      font-weight: 700;
+      margin: 0 0 0.5rem;
+      color: #222;
+    }
+    .submit-loading-msg {
+      font-size: 0.9rem;
+      line-height: 1.55;
+      margin: 0;
+      color: #444;
+    }
+  </style>
   <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
   <script src="{{ asset('js/form.js') }}"></script>
 <script type="text/javascript">
+function showSubmitLoading() {
+  var overlay = document.getElementById('submit-loading-overlay');
+  if (overlay) {
+    overlay.classList.add('is-visible');
+    overlay.setAttribute('aria-hidden', 'false');
+  }
+}
 function goNext()
 {
-    document.getElementById('send').disabled = true;
-    document.lifeform.submit();
+  var btn = document.getElementById('send');
+  if (btn) btn.disabled = true;
+  showSubmitLoading();
+  // 描画してから送信（真っ暗なまま待たせない）
+  requestAnimationFrame(function () {
+    requestAnimationFrame(function () {
+      document.lifeform.submit();
+    });
+  });
 }
+document.addEventListener('DOMContentLoaded', function () {
+  var form = document.getElementById('docform');
+  if (form) {
+    form.addEventListener('submit', function () {
+      showSubmitLoading();
+    });
+  }
+});
 </script>
 <script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
 new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],

@@ -44,7 +44,7 @@
 								@foreach($groups as $group)
 									
 										<tr>
-											<td class="text-center">{{$group_category[$group->category_id]}}</td>             
+											<td class="text-center">{{ $group_category[$group->category_id] ?? ('カテゴリID '.$group->category_id) }}</td>             
 											<td><a href="{{route('form.group.detail',[$group->id])}}">{{$group->name}}</a></td>     
 											<td class="text-right d-flex">
 												<a href="{{route('form.sender.index',[$form_id,$group->id])}}"  class="btn btn-sm btn-primary mr3">

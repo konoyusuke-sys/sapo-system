@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Validation\Rule;
 use Symfony\Component\HttpFoundation\StreamedResponse;
 
 use App\Models\Forms;
@@ -37,14 +38,15 @@ class FormController extends Controller
 
     public function list(Request $request, $form_id)
     {
-        $lists = $this->filteredHistoryFormsQuery($form_id, $request)->orderByDesc('id')->paginate(20);
+        $lists = $this->filteredHistoryFormsQuery($form_id, $request)->orderByDesc('id')->paginate(20)->withQueryString();
         $pref = config('custom.prefecture');
+        $sender_categories = $this->sortedSenderGroupCategories();
 
-        return view('form.list', compact('lists', 'form_id', 'pref'));
+        return view('form.list', compact('lists', 'form_id', 'pref', 'sender_categories'));
     }
 
     /**
-     * 申込履歴をCSVでダウンロード（一覧と同一の検索条件、登録時の全項目＋コードの表示名）。
+     * 申込履歴CSV（16列のみ：申込日～他社借入金額）。
      */
     public function exportHistoryCsv(Request $request, $form_id)
     {
@@ -52,11 +54,7 @@ class FormController extends Controller
 
         $pref = config('custom.prefecture');
         $job = config('custom.job');
-        $expect = config('custom.expectation');
-        $connect = config('custom.connect');
-        $statusLabels = config('custom.status');
-        $category = config('custom.SenderGroupCategory');
-        $sexLabels = config('custom.sex');
+        $birthYearLabels = config('lead_form.birth_year_label', []);
 
         $filename = 'form_history_'.$form_id.'_'.date('Ymd_His').'.csv';
 
@@ -67,81 +65,64 @@ class FormController extends Controller
         ];
 
         $self = $this;
-        $callback = function () use ($rows, $pref, $job, $expect, $connect, $statusLabels, $category, $sexLabels, $self) {
+        $callback = function () use ($rows, $pref, $job, $birthYearLabels, $self) {
             $out = fopen('php://output', 'w');
             fprintf($out, chr(0xEF).chr(0xBB).chr(0xBF));
 
             $headings = [
-                'ID', 'フォームID', '登録日時', '氏名', 'フリガナ', 'メールアドレス', 'LINE ID',
-                '勤務先名', '勤務先電話番号', '性別(値)', '性別', '生年', '生月', '生日',
-                '郵便番号', '都道府県ID', '都道府県', '市区町村', '番地等', '建物名等',
-                '携帯電話', '固定電話', 'ご要望・コメント',
-                '月収(入力値)', '業種(自由項目2)', '職業ID', '職業', '所得種別(自由項目4)',
-                '他者借入件数', '他者借入金額', '借入希望金額ID', '借入希望金額',
-                '希望連絡時間帯ID', '希望連絡時間帯', '管理メモ',
-                'IPアドレス', 'ホスト名', 'User-Agent',
-                'ステータス(値)', 'ステータス', '送信カテゴリID', '送信カテゴリ',
-                '削除フラグ', '最終更新日時', '更新日時',
+                '申込日', '名前', 'フリガナ', '生年月日', '携帯電話番号', '固定電話番号',
+                'メールアドレス', 'LINE ID', '郵便番号', '自宅住所', '職業', '勤務先名',
+                '勤務先電話番号', '月収', '他社借入件数', '他社借入金額',
             ];
             fputcsv($out, $headings);
 
             foreach ($rows as $row) {
-                $createdAt = $self->formatExportDateTime($row->created_at);
-                $updatedAt = $self->formatExportDateTime($row->updated_at);
-
-                fputcsv($out, [
-                    $row->id,
-                    $row->form_id,
-                    $createdAt,
-                    $row->name,
-                    $row->kana,
-                    $row->email,
-                    $row->line_id,
-                    $row->company_name,
-                    $row->company_tel,
-                    $row->sex,
-                    $self->mapLabel($sexLabels, $row->sex),
-                    $row->birth_year,
-                    $row->birth_month,
-                    $row->birth_date,
-                    $row->postal_code,
-                    $row->pref_id,
-                    $self->mapLabel($pref, $row->pref_id),
-                    $row->addr1,
-                    $row->addr2,
-                    $row->addr3,
-                    $row->mobile,
-                    $row->tel,
-                    $row->comment,
-                    $row->salary_type,
-                    $row->industry_type,
-                    $row->job_type,
-                    $self->mapLabel($job, $row->job_type),
-                    $row->income_type,
-                    $row->debt_count,
-                    $row->debt_amount,
-                    $row->expectation_amount,
-                    $self->mapLabel($expect, $row->expectation_amount),
-                    $row->connect_hour_type,
-                    $self->mapLabel($connect, $row->connect_hour_type),
-                    $row->memo,
-                    $row->user_ip,
-                    $row->user_host,
-                    $row->user_agent,
-                    $row->status,
-                    $self->mapLabel($statusLabels, $row->status),
-                    $row->sent_category_id,
-                    $self->mapLabel($category, $row->sent_category_id),
-                    $row->del_flg,
-                    $row->last_update_date,
-                    $updatedAt,
-                ]);
+                fputcsv($out, $self->buildHistoryCsvRow($row, $pref, $job, $birthYearLabels));
             }
 
             fclose($out);
         };
 
         return new StreamedResponse($callback, 200, $headers);
+    }
+
+    /**
+     * @param  \App\Models\HistoryForm  $row
+     */
+    protected function buildHistoryCsvRow($row, array $pref, array $job, array $birthYearLabels): array
+    {
+        $by = (string) $row->birth_year;
+        $yearLabel = $birthYearLabels[$by] ?? $by;
+        $birthday = $yearLabel.'年'.(int) $row->birth_month.'月'.(int) $row->birth_date.'日';
+
+        $prefName = $this->mapLabel($pref, $row->pref_id);
+        $address = trim(implode(' ', array_filter([
+            $prefName,
+            $row->addr1,
+            $row->addr2,
+            $row->addr3,
+        ], function ($p) {
+            return $p !== null && $p !== '';
+        })));
+
+        return [
+            $this->formatExportDateTimeForCsv($row->created_at),
+            $row->name,
+            $row->kana,
+            $birthday,
+            $row->mobile,
+            $row->tel,
+            $row->email,
+            $row->line_id,
+            $row->postal_code,
+            $address,
+            $this->mapLabel($job, $row->job_type),
+            $row->company_name,
+            $row->company_tel,
+            $row->salary_type,
+            $row->debt_count,
+            $row->debt_amount,
+        ];
     }
 
     protected function filteredHistoryFormsQuery($form_id, Request $request)
@@ -159,6 +140,33 @@ class FormController extends Controller
         $query->when($email, function ($query, $email) {
             return $query->where('email', 'like', '%'.$email.'%');
         });
+
+        $dateFrom = $request->input('date_from');
+        if (is_string($dateFrom) && trim($dateFrom) !== '') {
+            try {
+                $from = Carbon::parse($dateFrom)->startOfDay();
+                $query->where('created_at', '>=', $from);
+            } catch (\Throwable $e) {
+                // 無効な日付は無視
+            }
+        }
+        $dateTo = $request->input('date_to');
+        if (is_string($dateTo) && trim($dateTo) !== '') {
+            try {
+                $to = Carbon::parse($dateTo)->endOfDay();
+                $query->where('created_at', '<=', $to);
+            } catch (\Throwable $e) {
+                // 無効な日付は無視
+            }
+        }
+
+        if ($request->filled('sent_category_id')) {
+            $allowed = array_map('strval', array_keys($this->sortedSenderGroupCategories()));
+            $cid = (string) $request->input('sent_category_id');
+            if (in_array($cid, $allowed, true)) {
+                $query->where('sent_category_id', (int) $cid);
+            }
+        }
 
         return $query;
     }
@@ -196,6 +204,72 @@ class FormController extends Controller
         }
 
         return (string) $value;
+    }
+
+    /**
+     * Excel で日時が数値扱いになり列幅不足で ### になるのを避けるため、和文の固定文字列として出力する。
+     *
+     * @param  mixed  $value
+     */
+    protected function formatExportDateTimeForCsv($value): string
+    {
+        if ($value === null || $value === '') {
+            return '';
+        }
+        if ($value instanceof \DateTimeInterface) {
+            return $value->format('Y年m月d日 H時i分s秒');
+        }
+        $str = trim((string) $value);
+        if ($str === '') {
+            return '';
+        }
+        try {
+            return Carbon::parse($str)->timezone(config('app.timezone'))->format('Y年m月d日 H時i分s秒');
+        } catch (\Throwable $e) {
+            return $str;
+        }
+    }
+
+    /**
+     * カテゴリID順に並べた通知グループマスタ（プルダウン表示の乱れ防止）。
+     */
+    protected function sortedSenderGroupCategories(): array
+    {
+        $cat = config('custom.SenderGroupCategory', []);
+        if (! is_array($cat)) {
+            return [];
+        }
+        uksort($cat, function ($a, $b) {
+            return (int) $a <=> (int) $b;
+        });
+
+        return $cat;
+    }
+
+    /**
+     * 指定フォームで未使用のカテゴリのみ（新規グループ追加用）。
+     */
+    protected function categoriesAvailableForNewGroup(int $form_id): array
+    {
+        $all = $this->sortedSenderGroupCategories();
+        $used = FormSenderGroups::where('form_id', $form_id)
+            ->pluck('category_id')
+            ->filter(function ($id) {
+                return $id !== null && $id !== '';
+            })
+            ->map(function ($id) {
+                return (int) $id;
+            })
+            ->all();
+        $usedSet = array_fill_keys($used, true);
+        $out = [];
+        foreach ($all as $id => $label) {
+            if (! isset($usedSet[(int) $id])) {
+                $out[$id] = $label;
+            }
+        }
+
+        return $out;
     }
 
     public function detail($form_id)
@@ -245,9 +319,10 @@ class FormController extends Controller
 
     public function group_index($form_id)
     {
-        $groups = FormSenderGroups::orderBy('category_id','asc')->get();
-        $group_category = config('custom.SenderGroupCategory');
-        return view('form.group.index',compact('groups','form_id','group_category'));       
+        $groups = FormSenderGroups::where('form_id', $form_id)->orderBy('category_id', 'asc')->get();
+        $group_category = $this->sortedSenderGroupCategories();
+
+        return view('form.group.index', compact('groups', 'form_id', 'group_category'));
     }
 
     public function group_detail($id)
@@ -255,7 +330,7 @@ class FormController extends Controller
         
         $group = FormSenderGroups::find($id);
         $form_id = $group->form_id;
-        $group_category = config('custom.SenderGroupCategory');
+        $group_category = $this->sortedSenderGroupCategories();
         $status = config('custom.status');
         $expectation = config('custom.expectation');
         $job = config('custom.job');
@@ -268,13 +343,15 @@ class FormController extends Controller
     {
         $form_id = $id;
         $group = new FormSenderGroups();
-        $group_category = config('custom.SenderGroupCategory');
+        $group_category = $this->sortedSenderGroupCategories();
+        $categoriesForAdd = $this->categoriesAvailableForNewGroup((int) $form_id);
         $status = config('custom.status');
         $expectation = config('custom.expectation');
         $job = config('custom.job');
         $pref = config('custom.prefecture');
         $mode = 'add';
-        return view('form.group.detail',compact('group','group_category','status','form_id','mode','expectation','job','pref'));       
+
+        return view('form.group.detail', compact('group', 'group_category', 'categoriesForAdd', 'status', 'form_id', 'mode', 'expectation', 'job', 'pref'));
     }
 
     public function update_group(Request $request)
@@ -292,7 +369,12 @@ class FormController extends Controller
             ) ;
         }else{
             $rule  =  array(
-                'category_id'       => 'required',
+                'category_id'       => [
+                    'required',
+                    Rule::unique('dtb_form_sender_group', 'category_id')->where(function ($query) use ($data) {
+                        return $query->where('form_id', (int) ($data['form_id'] ?? 0));
+                    }),
+                ],
                 'status'       => 'required',
                 'name'       => 'required',
                 'from_name'       => 'required',
@@ -303,7 +385,11 @@ class FormController extends Controller
         }
         
         
-        $validator = Validator::make($data,$rule);
+        $messages = [
+            'category_id.unique' => 'このカテゴリには既にグループが登録されています。未使用のカテゴリ（親、A管理・A群～O管理・O群）を選択してください。',
+        ];
+
+        $validator = Validator::make($data, $rule, $messages);
         
         if ($validator->fails()) {
             $this->flashMessage('error', '入力内容に誤りがあります。', 'error');
@@ -315,6 +401,7 @@ class FormController extends Controller
             $form = FormSenderGroups::where('id',$data['id'])->first();
             $form->name = $data['name'];
             $form->form_id = $data['form_id'];
+            $form->comment = $data['comment'] ?? null;
             $form->mail_title = $data['mail_title'];
             $form->mail_body = $data['mail_body'];
             $form->from_name = $data['from_name'];
@@ -334,7 +421,7 @@ class FormController extends Controller
             $form->name = $data['name'];
             $form->form_id = $data['form_id'];
             $form->category_id = $data['category_id'];
-            $form->comment = $data['comment'];
+            $form->comment = $data['comment'] ?? null;
             $form->mail_title = $data['mail_title'];
             $form->mail_body = $data['mail_body'];
             $form->from_name = $data['from_name'];
@@ -361,7 +448,7 @@ class FormController extends Controller
         
         $senders = FormSenders::where('group_id',$group_id)->get();
         $group = FormSenderGroups::find($group_id);
-        $group_category = config('custom.SenderGroupCategory');
+        $group_category = $this->sortedSenderGroupCategories();
         return view('form.sender.index',compact('senders', 'group','form_id','group_category','group_id'));       
     }
 
@@ -371,7 +458,7 @@ class FormController extends Controller
         $sender = FormSenders::find($sender_id);
         $form_id = $sender->form_id;
         $group_id = $sender->group_id;
-        $group_category = config('custom.SenderGroupCategory');
+        $group_category = $this->sortedSenderGroupCategories();
         $status = config('custom.status');
         $mode = 'update';
         return view('form.sender.detail',compact('sender','group_category','status','form_id','mode','group_id'));       
@@ -382,7 +469,7 @@ class FormController extends Controller
         
         $form_id = FormSenderGroups::find($group_id)->form_id;
         $sender = new FormSenders();
-        $group_category = config('custom.SenderGroupCategory');
+        $group_category = $this->sortedSenderGroupCategories();
         $status = config('custom.status');
         $mode = 'add';
         return view('form.sender.detail',compact('sender','group_category','status','form_id','mode','group_id'));       
@@ -449,62 +536,7 @@ class FormController extends Controller
 
     public function getArraySenderGroupCategory()
     {
-        $return = [];
-        // $return[0] = "親";
-        $return[1] = "A管理";
-        $return[2] = "A群";
-        $return[3] = "B管理";
-        $return[4] = "B群";
-        $return[5] = "C管理";
-        $return[6] = "C群";
-        $return[7] = "D管理";
-        $return[8] = "D群";
-        $return[9] = "E管理";
-        $return[10] = "E群";
-        $return[11] = "F管理";
-        $return[12] = "F群";
-        $return[13] = "G管理";
-        $return[14] = "G群";
-        $return[15] = "H管理";
-        $return[16] = "H群";
-        $return[17] = "I管理";
-        $return[18] = "I群";
-        $return[19] = "J管理";
-        $return[20] = "J群";
-        $return[21] = "K管理";
-        $return[22] = "K群";
-        $return[23] = "L管理";
-        $return[24] = "L群";
-        $return[25] = "M管理";
-        $return[26] = "M群";
-        $return[27] = "N管理";
-        $return[28] = "N群";
-        $return[29] = "O管理";
-        $return[30] = "O群";
-        $return[31] = "P管理";
-        $return[32] = "P群";
-        $return[33] = "Q管理";
-        $return[34] = "Q群";
-        $return[35] = "R管理";
-        $return[36] = "R群";
-        $return[37] = "S管理";
-        $return[38] = "S群";
-        $return[39] = "T管理";
-        $return[40] = "T群";
-        $return[41] = "U管理";
-        $return[42] = "U群";
-        $return[43] = "V管理";
-        $return[44] = "V群";
-        $return[45] = "W管理";
-        $return[46] = "W群";
-        $return[47] = "X管理";
-        $return[48] = "X群";
-        $return[49] = "Y管理";
-        $return[50] = "Y群";
-        $return[51] = "Z管理";
-        $return[52] = "Z群";
-
-        return $return;
+        return config('custom.SenderGroupCategory', []);
     }
 
 }

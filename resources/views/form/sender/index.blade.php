@@ -45,7 +45,7 @@
 								@foreach($senders as $sender)
 									
 										<tr>
-											<td class="text-center">{{$group_category[$group->category_id]}}</td>             
+											<td class="text-center">{{ $group_category[$group->category_id] ?? ('カテゴリID '.$group->category_id) }}</td>             
 											<td>{{$group->name}}</td>     
 											<td><a href="{{route('form.sender.detail',[$sender->id])}}">{{$sender->email}}</a></td>     
 											<td class="text-right">

@@ -16,6 +16,7 @@ use App\Libraries\JPHPMailer;
 
 
 use App\Mail\ReplyEmail;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Mail;
 
 class FrontController extends Controller
@@ -99,7 +100,8 @@ class FrontController extends Controller
         $last = HistoryForm::latest()->first();
         $lastSentCategoryId = $last ? (int) $last->sent_category_id : 0;
         $target = $lastSentCategoryId + 1;
-        if ($target > 52) {
+        $maxCat = (int) config('custom.sender_category_max_id', 30);
+        if ($target > $maxCat) {
             $target = 1;
         }
 
@@ -156,6 +158,7 @@ class FrontController extends Controller
         $pref = config('custom.prefecture');
         $job = config('custom.job');
         $connect = config('custom.connect');
+        $expect = config('custom.expectation');
 
         $placeholders = [
             '%%name%%' => $data['name_sei'].$data['name_mei'],
@@ -176,7 +179,7 @@ class FrontController extends Controller
             '%%income%%' => $data['income'],
             '%%debt_count%%' => $data['your_borrowing_num'],
             '%%debt_amount%%' => $data['your_borrowing_num2'],
-            '%%expectation_amount%%' => $data['desired_borrowing'],
+            '%%expectation_amount%%' => $expect[$data['desired_borrowing']] ?? '',
             '%%connect_hour_type%%' => $connect[$data['time']],
             '%%comment%%' => $data['your_message'] ?? '',
             '%%user_ip%%' => $_SERVER["REMOTE_ADDR"],
@@ -190,11 +193,21 @@ class FrontController extends Controller
             $mail_body = $dtb_form->mail_body;
             $message = str_replace(array_keys($placeholders), array_values($placeholders), $mail_body);
             $mail_data['message'] = nl2br($message);
-            $mail_data['from_email'] = 'machida.japan.1982@japanhub.co';
-            $mail_data['from_name'] = $dtb_form->from_name;
+            $fromEmail = filter_var(trim((string) $dtb_form->from_email), FILTER_VALIDATE_EMAIL)
+                ? trim($dtb_form->from_email)
+                : config('mail.from.address');
+            $mail_data['from_email'] = $fromEmail ?: config('mail.from.address');
+            $mail_data['from_name'] = $dtb_form->from_name ?: config('mail.from.name');
             $mail_data['subject'] = $dtb_form->mail_title;
 
-            Mail::to($data['your_mail'])->send(new ReplyEmail($mail_data));
+            try {
+                Mail::to($data['your_mail'])->send(new ReplyEmail($mail_data));
+            } catch (\Throwable $e) {
+                Log::error('Lead form user confirmation mail failed', [
+                    'to' => $data['your_mail'],
+                    'error' => $e->getMessage(),
+                ]);
+            }
         }
 
         return redirect('/thanks');        
@@ -272,23 +285,26 @@ class FrontController extends Controller
             $mail_body = $sender->mail_body;
             $message = str_replace(array_keys($placeholders), array_values($placeholders), $mail_body);
             $mail_data['message'] = nl2br($message);
-            // $mail_data['from_email'] = $sender->from_email;
-            $mail_data['from_email'] = 'machida.japan.1982@japanhub.co';
-            $mail_data['from_name'] = $sender->from_name;
+            $fromEmail = filter_var(trim((string) $sender->from_email), FILTER_VALIDATE_EMAIL)
+                ? trim($sender->from_email)
+                : config('mail.from.address');
+            $mail_data['from_email'] = $fromEmail ?: config('mail.from.address');
+            $mail_data['from_name'] = $sender->from_name ?: config('mail.from.name');
             $mail_data['subject'] = $sender->mail_title;
             
             try {
-                if (true) {
-                    Mail::to($sender->email)->send(new ReplyEmail($mail_data));
-                    $form = HistoryForm::find($data['id']);
+                Mail::to($sender->email)->send(new ReplyEmail($mail_data));
+                $form = HistoryForm::find($data['id']);
+                if ($form) {
                     $form->status = 0;
                     $form->save();
                 }
-                
-                
-            } catch (Exception $e) {
-                dd($e->getMessage());
-                die();
+            } catch (\Throwable $e) {
+                Log::error('Scheduled notification mail failed', [
+                    'to' => $sender->email,
+                    'group_id' => $sender->group_id ?? null,
+                    'error' => $e->getMessage(),
+                ]);
             }
             
 
@@ -357,7 +373,8 @@ class FrontController extends Controller
         $last = HistoryForm::latest()->first();
         $lastSentCategoryId = $last ? (int) $last->sent_category_id : 0;
         $target = $lastSentCategoryId + 2;
-        if ($target > 52) {
+        $maxCat = (int) config('custom.sender_category_max_id', 30);
+        if ($target > $maxCat) {
             $target = 1;
         }
 

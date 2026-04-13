@@ -42,18 +42,26 @@
 								</div>
 							</div>
 							@if($mode == 'add') 
+							@php
+								$categoryOptions = isset($categoriesForAdd) ? $categoriesForAdd : $group_category;
+							@endphp
 							<div class="form-group @if($errors->has('category_id')) has-error @endif">
 								<label for="slug" class="col-sm-2 control-label">カテゴリ</label>
 								<div class="col-sm-10 col-xs-12">
 									@if($errors->has('category_id'))
-									<span class="text-red">※ カテゴリが入力されていません。</span>
+									<span class="text-red">※ カテゴリを確認してください。</span>
 									@endif
+									@if(count($categoryOptions) === 0)
+									<p class="text-warning">すべてのカテゴリにグループが作成済みです。不要なグループを削除するか、管理者にご連絡ください。</p>
+									@else
 									<select name="category_id" class="form-control"   id="category_id">
 										<option value="">選択してください</option>
-										@foreach($group_category as $key => $val)
+										@foreach($categoryOptions as $key => $val)
 										<option label="{{$val}}" value="{{$key}}" @if($group->category_id == $key) selected="selected" @endif>{{$val}}</option>
 										@endforeach
 									</select>
+									<p class="help-block text-muted small">未使用のカテゴリのみ表示されます（親、A管理・A群～O管理・O群まで）。</p>
+									@endif
 								</div>
 							</div>
 							@endif
@@ -165,9 +173,9 @@
 								</div>
 							</div>
 							@php
-								$except_expectation = $group->except_expectation !=='' ? json_decode($group->except_expectation):[];
-								$except_job = $group->except_job !=='' ? json_decode($group->except_job):[];
-								$except_pref = $group->except_pref !=='' ? json_decode($group->except_pref):[];
+								$except_expectation = is_array($d = json_decode((string) ($group->except_expectation ?? ''), true)) ? $d : [];
+								$except_job = is_array($d = json_decode((string) ($group->except_job ?? ''), true)) ? $d : [];
+								$except_pref = is_array($d = json_decode((string) ($group->except_pref ?? ''), true)) ? $d : [];
 							@endphp
 							<div class="form-group ">
 								<label for="from_email" class="col-sm-2 control-label">借入希望金額</label>
@@ -251,7 +259,7 @@
 							<div class="clearfix">
 								<div class="pull-right">
 									<div class="text-right">
-										<button type="submit" name="subm" class="btn btn-primary">更新</button>
+										<button type="submit" name="subm" class="btn btn-primary" @if($mode == 'add' && isset($categoriesForAdd) && count($categoriesForAdd) === 0) disabled @endif>{{ $mode == 'add' ? '登録' : '更新' }}</button>
 									</div>
 								</div>
 							</div>
